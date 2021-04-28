@@ -2,6 +2,9 @@
 
 # the name of the piccolo system
 PICCOLONAME=piccolo3-test
+# change to true to enable the triggered and/or reboot daemons
+ENABLE_TRIGGERED_DAEMON=false
+ENABLE_REBOOT_DAEMON=false
 
 echo Enter new password
 passwd pi
@@ -57,5 +60,12 @@ EOF
 
 # start piccolo services
 systemctl enable piccolo3-server piccolo3-web
+
+if [ "$ENABLE_TRIGGERED_DAEMON" = true ]; then
+    systemctl enable piccolo3-triggered
+fi
+if [ "$ENABLE_REBOOT_DAEMON" = true ]; then
+    systemctl enable piccolo3-reboot
+fi
 
 reboot
