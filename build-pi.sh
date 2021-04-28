@@ -2,8 +2,6 @@
 
 # the name of the piccolo system
 PICCOLONAME=piccolo3-test
-# the piccolo server package
-PICCOLOPKG=piccolo3-server-bundle_0.2-4_armhf.deb
 
 echo Enter new password
 passwd pi
@@ -26,17 +24,23 @@ EOF
 systemctl enable ssh
 systemctl start ssh
 
+# install piccolo repo key
+wget -O /tmp/GeoSciences-Package-Service.gpg https://debs.geos.ed.ac.uk/keys/GeoSciences-Package-Service.gpg
+apt-key add /tmp/GeoSciences-Package-Service.gpg
+
+# and add repo
+cat <<EOF > /etc/apt/sources.list.d/piccolo.sources
+Types: deb
+URIs: https://debs.geos.ed.ac.uk/piccolo
+Suites:  buster
+Components: piccolo
+Signed-By: 7859D35F0CD88A9E939AE644CB330CFDB2D2256F
+EOF
+
 # update system and install dependencies
 apt -y update
 apt -y dist-upgrade
-apt -y install python3-numpy python3-psutil python3-configobj python3-daemon \
-    python3-tz python3-gpiozero python3-dateutil python3-lockfile \
-    python3-bitarray python3-scipy python3-sqlalchemy python python3-usb
-
-# get server bundle
-wget www.geos.ed.ac.uk/~mhagdorn/piccolo/$PICCOLOPKG
-
-dpkg -i $PICCOLOPKG
+apt -y install geos-release-ubuntu piccolo3-server-bundle
 
 # setup piccolo server
 cat << EOF > /etc/piccolo.cfg
