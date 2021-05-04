@@ -43,6 +43,7 @@ EOF
 # update system and install dependencies
 apt -y update
 apt -y dist-upgrade
+apt -y install chrony
 apt -y install geos-release-ubuntu piccolo3-server-bundle
 
 # setup piccolo server
@@ -57,6 +58,9 @@ mount = True
 datadir = piccolo3_data
 device = /dev/sda1
 EOF
+
+# set timezone to UTC
+timedatectl set-timezone UTC
 
 # start piccolo services
 systemctl enable piccolo3-server piccolo3-web
